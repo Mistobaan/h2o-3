@@ -11,12 +11,14 @@ public class ModelMetricsRegressionGLM extends ModelMetricsRegression implements
   public final double _resDev;
   public final double _nullDev;
   public final double _AIC;
+  public final double _r2;
 
-  public ModelMetricsRegressionGLM(Model model, Frame frame, long nobs, double mse, double sigma, double mae, double resDev, double meanResDev, double nullDev, double aic, long nDof, long rDof) {
+  public ModelMetricsRegressionGLM(Model model, Frame frame, long nobs, double mse, double sigma, double mae, double resDev, double meanResDev, double nullDev, double aic, double r2, long nDof, long rDof) {
     super(model, frame, nobs, mse, sigma, mae, meanResDev);
     _resDev = resDev;
     _nullDev = nullDev;
     _AIC = aic;
+    _r2 = r2;
     _nullDegressOfFreedom = nDof;
     _residualDegressOfFreedom = rDof;
   }
@@ -44,6 +46,7 @@ public class ModelMetricsRegressionGLM extends ModelMetricsRegression implements
     sb.append(" null deviance: " + (float)_nullDev + "\n");
     sb.append(" residual deviance: " + (float)_resDev + "\n");
     sb.append(" AIC: " + (float)_AIC + "\n");
+    sb.append(" R^2: " + (float) _r2 + "\n");
     return sb.toString();
   }
 

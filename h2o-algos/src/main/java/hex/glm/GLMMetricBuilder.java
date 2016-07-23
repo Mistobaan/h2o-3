@@ -27,12 +27,14 @@ public class GLMMetricBuilder extends MetricBuilderSupervised<GLMMetricBuilder> 
   long _nobs;
   double _aic;// internal AIC used only for poisson family!
   private double _aic2;// internal AIC used only for poisson family!
+  double _r2; //Set to NaN initially
   final GLMModel.GLMWeightsFun _glmf;
   final private int _rank;
   MetricBuilder _metricBuilder;
   final boolean _intercept;
   private final double [] _ymu;
-
+  private double _mse;
+  private double _sigma;
   final boolean _computeMetrics;
   public GLMMetricBuilder(String[] domain, double [] ymu, GLMWeightsFun glmf, int rank, boolean computeMetrics, boolean intercept){
     super(domain == null?0:domain.length, domain);
@@ -180,13 +182,6 @@ public class GLMMetricBuilder extends MetricBuilderSupervised<GLMMetricBuilder> 
     _aic += 2*_rank;
   }
 
-//  @Override
-//  public String toString(){
-//    if(_metricBuilder != null)
-//      return _metricBuilder.toString() + ", explained_dev = " + MathUtils.roundToNDigits(1 - residual_deviance / null_deviance,5);
-//    else return "explained dev = " + MathUtils.roundToNDigits(1 - residual_deviance / null_deviance,5);
-//  }
-
   @Override public ModelMetrics makeModelMetrics(Model m, Frame f, Frame adaptedFrame, Frame preds) {
     GLMModel gm = (GLMModel)m;
     computeAIC();
@@ -208,7 +203,11 @@ public class GLMMetricBuilder extends MetricBuilderSupervised<GLMMetricBuilder> 
       metrics = new ModelMetricsMultinomialGLM(m, f, metricsMultinomial._nobs,metricsMultinomial._MSE, metricsMultinomial._domain, metricsMultinomial._sigma, metricsMultinomial._cm, metricsMultinomial._hit_ratios, metricsMultinomial._logloss, residualDeviance(), null_devince, _aic, nullDOF(), resDOF());
     } else {
       ModelMetricsRegression metricsRegression = (ModelMetricsRegression) metrics;
-      metrics = new ModelMetricsRegressionGLM(m, f, metricsRegression._nobs, metricsRegression._MSE, metricsRegression._sigma, metricsRegression._mean_absolute_error, residualDeviance(), residualDeviance()/_wcount, null_devince, _aic, nullDOF(), resDOF());
+      _mse = metricsRegression._MSE;
+      _sigma = metricsRegression._sigma;
+      // only OLS should have an R^2 - otherwise ill-defined
+      _r2 = (_glmf._link == GLMModel.GLMParameters.Link.identity && _glmf._family == Family.gaussian) ? 1.0 - _mse/(_sigma*_sigma) : Double.NaN;
+      metrics = new ModelMetricsRegressionGLM(m, f, metricsRegression._nobs, metricsRegression._MSE, metricsRegression._sigma, metricsRegression._mean_absolute_error, residualDeviance(), residualDeviance()/_wcount, null_devince, _aic, _r2, nullDOF(), resDOF());
     }
     return gm._output.addModelMetrics(metrics); // Update the metrics in-place with the GLM version
   }

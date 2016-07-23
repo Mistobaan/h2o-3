@@ -17,13 +17,7 @@ public class ModelMetricsSupervised extends ModelMetrics {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append(super.toString());
-    sb.append(" R^2: " + (float)r2() + "\n");
     return sb.toString();
-  }
-
-  public final double r2() {
-    double var = _sigma*_sigma;
-    return 1.0-_MSE /var;
   }
 
   public static class MetricBuilderSupervised<T extends MetricBuilderSupervised<T>> extends MetricBuilder<T> {
