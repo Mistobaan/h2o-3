@@ -14,20 +14,21 @@ import water.util.TwoDimTable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 
 /** A collection of named {@link Vec}s, essentially an R-like Distributed Data Frame.
  *
  *  <p>Frames represent a large distributed 2-D table with named columns
- *  ({@link Vec}s) and numbered rows.  A reasonable <em>column</em> limit is
- *  100K columns, but there's no hard-coded limit.  There's no real <em>row</em>
+ *  ({@link Vec}s) and numbered rows. A reasonable <em>column</em> limit is
+ *  100K columns, but there is no hard-coded limit. There is no real <em>row</em>
  *  limit except memory; Frames (and Vecs) with many billions of rows are used
  *  routinely.
  *
  *  <p>A Frame is a collection of named Vecs; a Vec is a collection of numbered
- *  {@link Chunk}s.  A Frame is small, cheaply and easily manipulated, it is
- *  commonly passed-by-Value.  It exists on one node, and <em>may</em> be
+ *  {@link Chunk}s.  A Frame is small, cheap and easy to manipulate, it is
+ *  often passed-by-Value.  It exists on one node, and <em>may</em> be
  *  stored in the {@link DKV}.  Vecs, on the other hand, <em>must</em> be stored in the
  *  {@link DKV}, as they represent the shared common management state for a collection
  *  of distributed Chunks.
@@ -71,6 +72,7 @@ public class Frame extends Lockable<Frame> {
   private transient Vec _col0; // First readable vec; fast access to the VectorGroup's Chunk layout
 
   public boolean hasNAs(){
+    // TODO: Is this faster? return Arrays.stream(_vecs).filter(v -> v.naCnt() > 0).findFirst();
     for(Vec v:_vecs)
       if(v.naCnt() > 0) return true;
     return false;
@@ -103,7 +105,7 @@ public class Frame extends Lockable<Frame> {
     }
   }
 
-  /** Creates a frame with given key, names and vectors. */
+  /** Creates a frame with a given key, names and vectors. */
   public Frame( Key key, String names[], Vec vecs[] ) {
     super(key);
 
@@ -138,7 +140,7 @@ public class Frame extends Lockable<Frame> {
     _names = columns;
   }
   /** Deep copy of Vecs and Keys and Names (but not data!) to a new random Key.
-   *  The resulting Frame does not share with the original, so the set of Vecs
+   *  The resulting Frame does not share Vecs with the original, so the set of Vecs
    *  can be freely hacked without disturbing the original Frame. */
   public Frame( Frame fr ) {
     super( Key.<Frame>make() );
@@ -457,6 +459,7 @@ public class Frame extends Lockable<Frame> {
    *  @return the {@code Vec.byteSize} of all Vecs */
   public long byteSize() {
     Vec[] vecs = bulkRollups();
+    //TODO: Arrays.stream(vecs).map(vec().byteSize()).sum();
     long sum=0;
     for (Vec vec : vecs) sum += vec.byteSize();
     return sum;
