@@ -15,8 +15,11 @@ import water.util.TwoDimTable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static java.lang.Math.toIntExact;
 
 /** A collection of named {@link Vec}s, essentially an R-like Distributed Data Frame.
  *
@@ -1516,6 +1519,20 @@ public class Frame extends Lockable<Frame> {
       }
       return n;
     }
+  }
+
+  public FloatBuffer createBuffer(){
+      int size = numCols() * (int)(numRows());
+      float[] flat = new float[size * 10];
+      int j= 0;
+    for (Vec v : _vecs){
+      for (int i = 0; i < v.length(); i++) {
+        flat[j+i]=(float)v.at(i);
+        j++;
+      }
+    }
+
+    return FloatBuffer.wrap(new float[]{});
   }
 
   @Override public Class<KeyV3.FrameKeyV3> makeSchema() { return KeyV3.FrameKeyV3.class; }
