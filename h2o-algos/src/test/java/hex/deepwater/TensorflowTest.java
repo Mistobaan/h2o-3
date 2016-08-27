@@ -4,9 +4,6 @@
  */
 package hex.deepwater;
 
-
-import hex.deepwater.backends.cudnn.CudaSession;
-import hex.deepwater.backends.cudnn.DenseOp;
 import org.bytedeco.javacpp.tensorflow;
 import org.junit.BeforeClass;
 import org.junit.Test;

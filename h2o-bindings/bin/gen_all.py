@@ -7,6 +7,9 @@ import gen_docs_json
 import gen_java
 import gen_python
 import gen_thrift
+
+import gen_tensorflow
+
 import bindings
 import sys
 import os
@@ -44,6 +47,7 @@ gen_python.main()
 gen_docs_json.main()
 gen_thrift.main()
 gen_csharp.main()
+gen_tensorflow.main()
 bindings.done()
 print()
 

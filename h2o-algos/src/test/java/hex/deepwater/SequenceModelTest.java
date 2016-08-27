@@ -28,20 +28,6 @@ import static org.bytedeco.javacpp.tensorflow.Env;
 import static org.bytedeco.javacpp.tensorflow.GraphConstructorOptions;
 import static org.bytedeco.javacpp.tensorflow.OpRegistry;
 import static org.bytedeco.javacpp.tensorflow.ReadBinaryProto;
-//import com.google.devtools.build.lib.events.util.EventCollectionApparatus;
-
-/**
- * Created by fmilo on 8/15/16.
- */
-
-class Layer  {
-
-}
-
-class Sequence {
-
-
-}
 
 public class SequenceModelTest extends TestUtil {
 

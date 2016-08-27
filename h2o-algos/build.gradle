@@ -11,6 +11,7 @@ dependencies {
   testCompile project(path: ":h2o-core", configuration: "testArchives")
   compile files('water.gpu.jar')
   compile files('javacpp.jar')
+
   compile files('tensorflow.jar')
   compile files('tensorflow-linux-x86_64.jar')
 
@@ -19,11 +20,6 @@ dependencies {
 
   compile "com.google.protobuf:protobuf-java:3.0.0"
 
-  compile files('jython-standalone-2.7.0.jar')
-
-  compile files('jnumeric-0.2-SNAPSHOT.jar')
-
-  compile files('byte-buddy-dep-0.7-rc6.jar')
   testCompile files("libtestutil.jar")
 }
 
